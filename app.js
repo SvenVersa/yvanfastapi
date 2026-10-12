@@ -101,7 +101,11 @@ const AudioFX = {
 // 1. Fetch Heroes Archive
 async function initComic() {
     try {
-        const response = await fetch(`${API_URL}/heroes`);
+        const response = await fetch(`${API_URL}/heroes`, {
+        headers: {
+        "x-api-key": "omega_level_clearance"
+    }
+});
         if (!response.ok) throw new Error("API Route unreachable.");
         rawCatalog = await response.json();
         renderPublishers(); 
