@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omniverse Clash // Matchup Simulator</title>
+    <!-- Pulling in the exact same fonts used in your main archive and trivia game -->
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Open+Sans:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="comic-container">
+        <header class="comic-header">
+            <!-- Ensure you paste your main encyclopedia Vercel link here -->
+            <a href="https://yvanfastapi-59j23g3es-yvan-gael.vercel.app" class="return-btn">◀ RETURN TO ARCHIVES</a>
+            <h1>HYPOTHETICAL CLASH SIMULATOR</h1>
+        </header>
+
+        <main class="comic-panel">
+            <div class="clue-banner">CHOOSE YOUR COMBATANTS</div>
+            
+            <div class="vs-container">
+                <!-- COMBATANT A (LEFT PANEL) -->
+                <div class="fighter-card" id="fighter-a-card">
+                    <label for="fighter-a-select" class="fighter-label">FIGHTER ONE:</label>
+                    <select id="fighter-a-select" class="fighter-dropdown">
+                        <option value="">-- Select Target --</option>
+                        <!-- Roster injected via JavaScript -->
+                    </select>
+                    <div id="fighter-a-stats" class="clue-box hidden">
+                        <strong>PRIMARY POWERS:</strong>
+                        <p class="powers-val">...</p>
+                        <strong>TACTICAL VULNERABILITY:</strong>
+                        <p class="weakness-val">...</p>
+                    </div>
+                </div>
+                
+                <!-- ARENA CONTROLS (CENTER) -->
+                <div class="arena-center">
+                    <h2 class="pow-text vs-text">VS</h2>
+                    <button id="simulate-btn" class="action-btn" disabled>INITIATE CLASH!</button>
+                </div>
+                
+                <!-- COMBATANT B (RIGHT PANEL) -->
+                <div class="fighter-card" id="fighter-b-card">
+                    <label for="fighter-b-select" class="fighter-label">FIGHTER TWO:</label>
+                    <select id="fighter-b-select" class="fighter-dropdown">
+                        <option value="">-- Select Target --</option>
+                        <!-- Roster injected via JavaScript -->
+                    </select>
+                    <div id="fighter-b-stats" class="clue-box hidden">
+                        <strong>PRIMARY POWERS:</strong>
+                        <p class="powers-val">...</p>
+                        <strong>TACTICAL VULNERABILITY:</strong>
+                        <p class="weakness-val">...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BATTLE LOG NARRATIVE -->
+            <div id="battle-log" class="narrative-box hidden">
+                <!-- JavaScript will generate the play-by-play text here -->
+            </div>
+        </main>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>

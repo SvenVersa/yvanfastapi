@@ -1,0 +1,258 @@
+:root {
+    --primary-yellow: #FFD900;
+    --primary-red: #E62429;
+    --primary-blue: #0078F0;
+    --black: #111;
+    --white: #FFF;
+}
+
+body {
+    background-color: #d7b579;
+    /* Pulling the background directly from your live Vercel site */
+    background-image: linear-gradient(rgba(30, 15, 0, 0.4), rgba(30, 15, 0, 0.75)), url('https://yvanfastapi.vercel.app/comics/comicstrip.jpg');
+    background-repeat: repeat;
+    background-size: 100% 100%, 550px auto; 
+    animation: comicPan 90s linear infinite;
+    font-family: 'Comic Neue', cursive, sans-serif;
+    color: var(--black); 
+    min-height: 100vh;
+    padding: 1.5rem 1rem;
+    overflow-x: hidden;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes comicPan {
+    from { background-position: 0 0, 0 0; }
+    to { background-position: 0 0, -2000px -3000px; } 
+}
+
+.comic-container {
+    width: 100%;
+    max-width: 950px;
+}
+
+.comic-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.comic-header h1 {
+    font-family: 'Bangers', cursive;
+    font-size: 4.5rem;
+    color: var(--primary-yellow);
+    text-shadow: 5px 5px 0px var(--black);
+    letter-spacing: 2px;
+    margin: 10px 0;
+    -webkit-text-stroke: 2px var(--black);
+}
+
+.return-btn {
+    display: inline-block;
+    background: var(--white);
+    color: var(--black);
+    font-family: 'Bangers', cursive;
+    text-decoration: none;
+    padding: 5px 15px;
+    border: 3px solid var(--black);
+    box-shadow: 4px 4px 0px var(--black);
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    transition: transform 0.1s;
+}
+
+.return-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px var(--black); }
+
+.comic-panel {
+    background: var(--white);
+    border: 6px solid var(--black);
+    box-shadow: 15px 15px 0px var(--black);
+    padding: 30px;
+    position: relative;
+}
+
+.hidden { display: none !important; }
+
+.clue-banner {
+    background: var(--primary-yellow);
+    border: 4px solid var(--black);
+    padding: 10px;
+    font-family: 'Bangers', cursive;
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: 30px;
+    box-shadow: 5px 5px 0px var(--black);
+    transform: skew(-2deg);
+}
+
+/* VS Layout Setup */
+.vs-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.fighter-card {
+    flex: 1;
+    background: #f4f4f4;
+    border: 4px solid var(--black);
+    box-shadow: 6px 6px 0px var(--black);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.fighter-label {
+    font-family: 'Bangers', cursive;
+    font-size: 1.8rem;
+    color: var(--primary-red);
+    margin-bottom: 10px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.fighter-dropdown {
+    width: 100%;
+    padding: 12px;
+    font-family: 'Bangers', cursive;
+    font-size: 1.2rem;
+    border: 3px solid var(--black);
+    background: var(--white);
+    color: var(--black);
+    cursor: pointer;
+    box-shadow: 3px 3px 0px var(--black);
+    margin-bottom: 20px;
+    outline: none;
+}
+
+.fighter-dropdown:focus { border-color: var(--primary-blue); }
+
+.arena-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 150px;
+}
+
+.pow-text.vs-text {
+    font-family: 'Bangers', cursive;
+    font-size: 5rem;
+    color: var(--primary-blue);
+    text-shadow: 4px 4px 0px var(--black), -2px -2px 0 var(--primary-yellow), 2px -2px 0 var(--primary-yellow), -2px 2px 0 var(--primary-yellow), 2px 2px 0 var(--primary-yellow);
+    margin: 0 0 20px 0;
+    transform: rotate(-10deg);
+}
+
+.action-btn {
+    background: var(--primary-red);
+    color: var(--white);
+    border: 4px solid var(--black);
+    font-family: 'Bangers', cursive;
+    font-size: 1.8rem;
+    padding: 15px 20px;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 6px 6px 0px var(--black);
+    transition: transform 0.1s, box-shadow 0.1s;
+    width: 100%;
+}
+
+.action-btn:hover:not(:disabled) { 
+    transform: translate(-3px, -3px); 
+    box-shadow: 9px 9px 0px var(--black); 
+    background: #ff334b;
+}
+
+.action-btn:active:not(:disabled) { 
+    transform: translate(3px, 3px); 
+    box-shadow: 2px 2px 0px var(--black); 
+}
+
+.action-btn:disabled {
+    background: #666;
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Stats Box Inside Fighter Cards */
+.clue-box {
+    background: var(--white);
+    border: 3px solid var(--black);
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: inset 3px 3px 0px rgba(0,0,0,0.05);
+    flex-grow: 1;
+}
+
+.clue-box strong {
+    display: block;
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    color: var(--primary-blue);
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.clue-box p { 
+    font-size: 1.1rem; 
+    margin: 0 0 15px 0; 
+    font-weight: 700; 
+    color: var(--black); 
+}
+.clue-box p:last-child { margin-bottom: 0; }
+
+/* Battle Log */
+.narrative-box {
+    background: var(--comic-yellow, #FFD900);
+    border: 4px solid var(--black);
+    box-shadow: 8px 8px 0px var(--black);
+    padding: 25px;
+    font-family: 'Comic Neue', cursive;
+    font-weight: 700;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    margin-top: 20px;
+}
+
+.narrative-box h3 {
+    font-family: 'Bangers', cursive;
+    font-size: 2.5rem;
+    color: var(--primary-red);
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+    -webkit-text-stroke: 1px var(--black);
+}
+
+.narrative-box p {
+    margin-bottom: 10px;
+    border-bottom: 2px dashed rgba(0,0,0,0.1);
+    padding-bottom: 10px;
+}
+
+.narrative-box p:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* Responsive adjustment for smaller screens */
+@media (max-width: 768px) {
+    .vs-container {
+        flex-direction: column;
+    }
+    .pow-text.vs-text {
+        margin: 20px 0;
+    }
+    .arena-center {
+        width: 100%;
+    }
+}
