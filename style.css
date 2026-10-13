@@ -45,7 +45,13 @@ body {
 .hero-subhead { font-family: 'Bangers', cursive; letter-spacing: 0.15em; color: var(--ink-black); font-size: 1.2rem; }
 .comic-logo { font-family: 'Bangers', cursive; font-size: clamp(3.2rem, 8vw, 6.2rem); letter-spacing: 0.06em; line-height: 0.9; color: var(--comic-red); -webkit-text-stroke: 3px var(--ink-black); animation: vhs-glitch 5s infinite; transition: transform 0.2s; }
 .comic-logo:hover { transform: scale(1.05) rotate(-2deg); }
-.mode-toggles { justify-self: end; }
+.mode-toggles { 
+    justify-self: end; 
+    display: flex; 
+    flex-direction: column; /* Forces them to stack cleanly */
+    gap: 0.6rem; /* Adds the missing space between the buttons */
+    align-items: flex-end; /* Keeps them flush against the right side */
+}
 .comic-toggle-btn { background: var(--comic-blue); color: var(--ink-black); border: var(--panel-border); font-family: 'Bangers', cursive; font-size: 1.15rem; padding: 0.6rem 1rem; box-shadow: var(--small-shadow); cursor: pointer; transition: all 0.15s; }
 .comic-toggle-btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0px var(--ink-black); background: #4ddbff; }
 
