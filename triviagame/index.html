@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia Clash // Comic Archive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Open+Sans:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="comic-container">
+        <header class="comic-header">
+            <!-- Ensure you put your main website's Vercel link here -->
+            <a href="../index.html" class="return-btn">◀ RETURN TO ARCHIVES</a>
+            <h1>HERO TRIVIA CLASH!</h1>
+            <div class="hud">
+                <div class="stat-box">SCORE: <span id="score">0</span></div>
+                <div class="stat-box timer-box">TIME: <span id="timer">10</span>s</div>
+            </div>
+        </header>
+
+        <main class="comic-panel">
+            <div id="boot-screen" class="panel-content">
+                <h2>Loading Issue #1...</h2>
+                <p>Gathering character files from the multiverse...</p>
+            </div>
+
+            <div id="game-screen" class="panel-content hidden">
+                <div class="clue-banner">GUESS THE SECRET IDENTITY!</div>
+                
+                <div class="clue-grid">
+                    <div class="clue-box">
+                        <strong>SUPER POWERS:</strong>
+                        <p id="clue-powers">...</p>
+                    </div>
+                    <div class="clue-box">
+                        <strong>WEAKNESS:</strong>
+                        <p id="clue-weakness">...</p>
+                    </div>
+                    <div class="clue-box">
+                        <strong>BASE OF OPERATIONS:</strong>
+                        <p id="clue-base">...</p>
+                    </div>
+                </div>
+
+                <div class="options-grid" id="options-grid">
+                    <!-- Buttons injected via JS -->
+                </div>
+            </div>
+
+            <div id="game-over-screen" class="panel-content hidden">
+                <h2 class="pow-text">K.O.!</h2>
+                <p>FINAL SCORE: <span id="final-score">0</span></p>
+                <button id="restart-btn" class="action-btn">PLAY AGAIN!</button>
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
