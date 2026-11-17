@@ -34,17 +34,21 @@ def get_db_connection():
         raise HTTPException(status_code=500, detail="Database connection failed")
 
 # ---------------------------------------------------------
-# AUTHENTICATION & SECURITY
+# AUTHENTICATION & SECURITY (3-TIER SYSTEM)
 # ---------------------------------------------------------
 
 class LoginRequest(BaseModel):
     username: str
     password: str
 
-# 1. Base Security: Verifies the key exists in the DB
+# 1. Base Security (Allows Admins, Users, and Guests)
 def get_current_user(x_api_key: str = Header(None)):
     if not x_api_key:
         raise HTTPException(status_code=401, detail="Unauthorized: Missing Clearance Key")
+    
+    # Hardcoded Guest bypass
+    if x_api_key == "public_guest_clearance":
+        return {"username": "Civilian_Guest", "role": "guest"}
     
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -58,13 +62,18 @@ def get_current_user(x_api_key: str = Header(None)):
         cursor.close()
         conn.close()
 
-# 2. Admin Security: Checks if the user is an admin
+# 2. Middle-Tier Security (Blocks Guests, Allows Users & Admins)
+def require_registered(user: dict = Depends(get_current_user)):
+    if user['role'] == 'guest':
+        raise HTTPException(status_code=403, detail="Forbidden: Registered Agent Clearance Required")
+    return user
+
+# 3. Top-Tier Security (Admins Only)
 def require_admin(user: dict = Depends(get_current_user)):
     if user['role'] != 'admin':
         raise HTTPException(status_code=403, detail="Forbidden: Omega Level Admin Clearance Required")
     return user
 
-# 3. Login Endpoint
 @app.post("/api/login")
 def login(req: LoginRequest):
     conn = get_db_connection()
@@ -78,7 +87,6 @@ def login(req: LoginRequest):
     finally:
         cursor.close()
         conn.close()
-
 # ---------------------------------------------------------
 # SECURE PYDANTIC VALIDATION MODELS
 # ---------------------------------------------------------
@@ -173,18 +181,20 @@ def search_heroes(q: Optional[str] = None, publisher: Optional[str] = None, alig
 
 @app.get("/api/heroes", dependencies=[Depends(get_current_user)])
 def get_all_heroes():
+    # Guests, Users, and Admins can all view the global catalog
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute("SELECT * FROM comic_archive ORDER BY id ASC;")
+        cursor.execute("SELECT id, alias, publisher, affiliation, origin_era, image, civilian_name FROM comic_archive ORDER BY id ASC;")
         heroes = cursor.fetchall()
         return heroes
     finally:
         cursor.close()
         conn.close()
 
-@app.get("/api/heroes/{hero_id}", dependencies=[Depends(get_current_user)])
+@app.get("/api/heroes/{hero_id}", dependencies=[Depends(require_registered)])
 def get_hero(hero_id: int):
+    # Middle-Tier: Only Users and Admins can view highly classified full dossier details
     conn = get_db_connection()
     cursor = conn.cursor()
     try:

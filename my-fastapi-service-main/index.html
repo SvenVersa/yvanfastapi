@@ -3,115 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMNIVERSE COMICS // Metahuman Classified</title>
+    <title>OMNIVERSE // Metahuman Classified</title>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,700&family=Permanent+Marker&display=swap" rel="stylesheet">
-    <!-- Fixed the missing 's' in styles.css -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
 
+    <!-- ========================================== -->
+    <!-- 3-TIER SUPERHERO LOGIN TERMINAL            -->
+    <!-- ========================================== -->
+    <div id="login-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--ink-black, #101012); background-image: radial-gradient(circle, #2a2a35 10%, #101012 80%); z-index:9999; display:flex; justify-content:center; align-items:center; flex-direction:column;">
+        
+        <!-- Terminal Header -->
+        <div style="transform: rotate(-2deg); margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-family:'Bangers', cursive; color:var(--comic-red, #e30022); font-size:clamp(4rem, 8vw, 6rem); margin:0; text-shadow: 4px 4px 0 #fff, 8px 8px 0 var(--comic-blue, #00d2ff); letter-spacing: 2px;">OMNIVERSE TERMINAL</h1>
+            <div style="background:var(--comic-yellow, #ffde00); color:#000; border: 3px solid #000; padding: 5px 15px; font-weight:bold; font-family:'Comic Neue', cursive; font-size: 1.2rem; display:inline-block; transform: rotate(3deg) translateY(-10px); box-shadow: 4px 4px 0 #000;">RESTRICTED MULTIVERSE ACCESS</div>
+        </div>
+        
+        <!-- Login Card -->
+        <div class="narrative-box" style="background:#fff; width:100%; max-width:420px; padding:2.5rem; text-align:center; box-shadow: 16px 16px 0 var(--comic-red, #e30022); border-radius: 2px;">
+            
+            <!-- REGISTERED AGENTS (Admin & Regular User) -->
+            <div style="margin-bottom: 1.5rem; text-align: left;">
+                <h3 style="font-family:'Bangers', cursive; font-size:2rem; margin-bottom:0.2rem; color:#000; text-align:center; letter-spacing: 1px;">OFFICIAL CLEARANCE</h3>
+                <p style="font-family:'Comic Neue', cursive; font-size:0.95rem; font-weight:bold; color:#555; text-align:center; margin-bottom: 1.2rem;">(Admins & Registered Field Agents)</p>
+                
+                <input type="text" id="login-user" placeholder="AGENT ALIAS (Username)" style="width:100%; padding:0.9rem; margin-bottom:0.8rem; border:3px solid #000; font-family:'Comic Neue', cursive; font-size:1.1rem; font-weight:bold; box-sizing: border-box; background:#f4f4f4;">
+                <input type="password" id="login-pass" placeholder="PASSCODE (Password)" style="width:100%; padding:0.9rem; margin-bottom:1.2rem; border:3px solid #000; font-family:'Comic Neue', cursive; font-size:1.1rem; font-weight:bold; box-sizing: border-box; background:#f4f4f4;">
+                
+                <button onclick="attemptLogin()" class="action-btn" style="width:100%; font-size:1.4rem; padding:0.8rem; background:var(--comic-red, #e30022); color:#fff; border:4px solid #000; cursor:pointer; font-family:'Bangers', cursive; box-shadow: 5px 5px 0 #000; transition: transform 0.1s;" onmousedown="this.style.transform='translate(3px, 3px)'; this.style.boxShadow='0 0 0 #000';" onmouseup="this.style.transform='translate(0,0)'; this.style.boxShadow='5px 5px 0 #000';">AUTHORIZE IDENTIFICATION</button>
+            </div>
+
+            <!-- Divider -->
+            <div style="border-top: 4px dashed #000; margin: 2rem 0; position: relative;">
+                <span style="position: absolute; top: -16px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 15px; font-family:'Bangers', cursive; font-size: 1.3rem; color:#000;">OR</span>
+            </div>
+
+            <!-- PUBLIC GUESTS -->
+            <div>
+                <h3 style="font-family:'Bangers', cursive; font-size:1.6rem; margin-bottom:0.8rem; color:#000; text-align:center;">CIVILIAN ACCESS</h3>
+                <button onclick="loginAsGuest()" style="width:100%; font-size:1.3rem; padding:0.8rem; background:var(--comic-blue, #00d2ff); color:#000; border:4px solid #000; font-family:'Bangers', cursive; cursor:pointer; box-shadow: 5px 5px 0 #000; transition: transform 0.1s;" onmousedown="this.style.transform='translate(3px, 3px)'; this.style.boxShadow='0 0 0 #000';" onmouseup="this.style.transform='translate(0,0)'; this.style.boxShadow='5px 5px 0 #000';">ENTER AS GUEST (CATALOG ONLY)</button>
+            </div>
+
+            <!-- Error Output -->
+            <div id="login-error" style="color:var(--comic-red, #e30022); margin-top:1.5rem; font-weight:bold; font-family:'Bangers', cursive; font-size:1.3rem; letter-spacing: 1px;"></div>
+        </div>
+    </div>
+    <!-- ========================================== -->
+
+    <!-- MAIN APP WRAPPER (Hidden until login) -->
     <header class="comic-masthead">
         <div class="comic-corner-box">
-            <span class="cc-price">90s</span>
-            <span class="cc-code">COMICS CODE AUTHORITY</span>
-            <span class="cc-issue">VOL. #01</span>
+            <span class="cc-price">OMNI</span>
+            <span class="cc-code">APPROVED BY AUTHORITY</span>
+            <span class="cc-issue">#001</span>
         </div>
-
         <div class="masthead-center">
-            <div class="hero-subhead">★ THE EXPANDED ACTION ARCHIVES ★</div>
+            <div class="hero-subhead">THE ULTIMATE METAHUMAN ARCHIVE</div>
             <h1 class="comic-logo">OMNIVERSE</h1>
         </div>
-
         <div class="mode-toggles">
             <button id="view-mode-btn" class="comic-toggle-btn">📜 SWITCH TO CONTINUOUS STRIP</button>
         </div>
     </header>
 
-    <!-- BREADCRUMB NAVIGATION (Updated with Back Button) -->
     <nav id="breadcrumb-trail" class="breadcrumb-bar hidden">
-        <button id="back-nav-btn" class="action-btn" style="margin-right: 1rem;">◀ BACK</button>
-        <span class="crumb" onclick="renderPublishers()">MULTIVERSE</span>
-        <span id="crumb-publisher" class="crumb hidden"></span>
-        <span id="crumb-faction" class="crumb hidden"></span>
+        <span class="crumb" onclick="renderPublishers()">MULTIVERSE HUB</span>
+        <span class="crumb hidden" id="crumb-publisher"></span>
+        <span class="crumb hidden" id="crumb-faction"></span>
     </nav>
 
-    <!-- TACTICAL FILTERS (Hidden until Tier 3) -->
     <section id="tactical-filters" class="comic-nav-deck hidden">
         <div class="search-bubble">
-            <input type="text" id="search-input" placeholder="🔍 QUERY CURRENT SQUAD..." autocomplete="off">
-            <button id="reset-btn" class="action-btn">RESET FILTERS!</button>
+            <span style="font-family:'Bangers'; font-size:1.4rem; color:var(--comic-red);">SEARCH ARCHIVE:</span>
+            <input type="text" id="search-input" placeholder="Enter Alias or Civilian Name...">
+            <button class="action-btn" id="reset-btn">RESET COMIC</button>
         </div>
-
+        
         <div class="squad-filters-container">
             <div class="filter-row">
-                <button class="tab-btn active" data-key="ALL" data-val="ALL">FULL SQUAD ROSTER</button>
-                <button class="tab-btn" data-key="alignment" data-val="Hero">🦸 HEROES</button>
-                <button class="tab-btn" data-key="alignment" data-val="Villain">🦹 VILLAINS</button>
-                <button class="tab-btn" data-key="alignment" data-val="Anti-Hero">⚡ ANTI-HEROES</button>
+                <button class="tab-btn active" data-key="ALL" data-val="ALL">FULL ROSTER</button>
+                <button class="tab-btn" data-key="alignment" data-val="Hero">HEROES</button>
+                <button class="tab-btn" data-key="alignment" data-val="Villain">VILLAINS</button>
+                <button class="tab-btn" data-key="alignment" data-val="Anti-Hero">ANTI-HEROES</button>
             </div>
         </div>
     </section>
 
     <div class="arcade-ticker-wrap">
-        <div class="ticker-label">▶ PRO-TIP:</div>
-        <div id="arcade-ticker-text" class="ticker-text">INSERT COIN TO INITIALIZE MULTIVERSE DATABANKS...</div>
+        <div class="ticker-label">COMIC TRIVIA ▶</div>
+        <div class="ticker-text" id="arcade-ticker-text">INITIALIZING DATABANKS...</div>
     </div>
 
     <main class="comic-book-viewport">
-        <!-- Paginator -->
         <div class="page-flipper hidden" id="page-flipper">
-            <button id="prev-page" class="flip-btn">◀ PREVIOUS PAGE</button>
-            <div class="page-indicator" id="page-indicator">PAGE 1 OF 1</div>
-            <button id="next-page" class="flip-btn">NEXT PAGE ▶</button>
+            <button class="flip-btn" id="prev-page" disabled>◀ PREV PAGE</button>
+            <span class="page-indicator" id="page-indicator">PAGE 1 OF ?</span>
+            <button class="flip-btn" id="next-page">NEXT PAGE ▶</button>
         </div>
 
-        <!-- Render Stage -->
-        <div id="comic-stage" class="comic-page-sheet">
-            <div id="loading" class="narrative-box splash-load">
-                SUMMONING METAHUMANS ACROSS TIME AND SPACE. . .
+        <section id="comic-stage" class="comic-page-sheet">
+            <div class="narrative-box splash-load">
+                LOADING MULTIVERSE DATA... PLEASE STAND BY.
             </div>
-        </div>
+        </section>
     </main>
-    
-    <!-- Modal -->
+
+    <!-- DOSSIER MODAL -->
     <div id="detail-modal" class="modal hidden">
         <div class="modal-comic-frame">
-            <button id="close-modal" class="close-comic-btn">✖ RESUME READING</button>
-            <div id="modal-body"></div>
+            <button id="close-modal" class="close-comic-btn">X</button>
+            <div id="modal-body">
+                <!-- Content injected via JS -->
+            </div>
         </div>
     </div>
 
- <!-- OMNIVERSE DUAL-ACCESS LOGIN TERMINAL -->
-<div id="login-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--ink-black, #101012); z-index:9999; display:flex; justify-content:center; align-items:center; flex-direction:column;">
-    <div style="transform: rotate(-2deg); margin-bottom: 2rem; text-align: center;">
-        <h1 style="font-family:'Bangers', cursive; color:var(--comic-red, #e30022); font-size:5rem; margin:0; text-shadow: 4px 4px 0 #fff;">OMNIVERSE TERMINAL</h1>
-        <div style="background:#fffc5c; border: 3px solid #000; padding: 5px 10px; font-weight:bold; display:inline-block; transform: rotate(4deg) translateY(-10px);">RESTRICTED MULTIVERSE ACCESS</div>
-    </div>
-    
-    <div class="narrative-box" style="background:#fff; width:360px; padding:2.5rem; text-align:center; box-shadow: 12px 12px 0 var(--comic-red, #e30022);">
-        
-        <!-- Usual Login Form -->
-        <div style="margin-bottom: 1.5rem;">
-            <h3 style="font-family:'Bangers', cursive; font-size:1.8rem; margin-bottom:0.8rem; color:#000;">AGENT CLEARANCE</h3>
-            <input type="text" id="login-user" placeholder="AGENT ALIAS (Username)" style="width:100%; padding:0.8rem; margin-bottom:0.8rem; border:3px solid #000; font-weight:bold; box-sizing: border-box;">
-            <input type="password" id="login-pass" placeholder="PASSCODE (Password)" style="width:100%; padding:0.8rem; margin-bottom:1rem; border:3px solid #000; font-weight:bold; box-sizing: border-box;">
-            <button onclick="attemptLogin()" class="action-btn" style="width:100%; font-size:1.3rem; padding:0.7rem;">AUTHORIZE AGENT</button>
-        </div>
-
-        <div style="border-top: 3px dashed #000; margin: 1.2rem 0; position: relative;">
-            <span style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 10px; font-family:'Bangers', cursive; font-size: 1.1rem;">OR</span>
-        </div>
-
-        <!-- Guest Login Option -->
-        <div>
-            <button onclick="loginAsGuest()" style="width:100%; font-size:1.3rem; padding:0.7rem; background:#fffc5c; border:3px solid #000; font-family:'Bangers', cursive; cursor:pointer; box-shadow: 4px 4px 0 #000; transition: transform 0.1s;" onmousedown="this.style.transform='translate(2px, 2px)'" onmouseup="this.style.transform='translate(0,0)'">ENTER AS GUEST (READ-ONLY)</button>
-        </div>
-
-        <div id="login-error" style="color:#e30022; margin-top:1rem; font-weight:bold; font-family:'Bangers', cursive; font-size:1.2rem;"></div>
-    </div>
-</div>
-
-    <script src="app.js"></script>  
-</body>
+    <script src="app.js"></script>
+</body> 
 </html>

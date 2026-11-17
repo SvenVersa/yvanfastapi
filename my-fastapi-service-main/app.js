@@ -357,38 +357,58 @@ function renderStripMode() {
 }
 
 // 5. Open Modal
-window.openDossier = function(id) {
-    AudioFX.playPunch();
-    const hero = rawCatalog.find(h => h.id === id);
-    if (!hero) return;
+// 5. Open Modal (With Tiered Security)
+window.openDossier = async function(id) {
+    if (typeof AudioFX !== 'undefined') AudioFX.playPunch();
 
-    modalBody.innerHTML = `
-        <div style="border-bottom: 4px solid var(--ink-black); padding-bottom: 1rem; margin-bottom: 1.5rem; position: relative;">
-            <div style="position:absolute; top:-10px; right:10px; font-family:'Bangers', cursive; color:#e30022; border:4px solid #e30022; padding:0.2rem 0.5rem; transform:rotate(12deg); font-size:1.5rem;">TOP SECRET</div>
-            <h2 style="font-family:'Bangers', cursive; font-size:3.8rem; color:var(--comic-red); line-height:0.95;">DOSSIER #${hero.id < 10 ? '0' + hero.id : hero.id}</h2>
-        </div>
-        <div style="width:100%; height:320px; border:5px solid var(--ink-black); box-shadow:8px 8px 0px var(--ink-black); margin-bottom:1.8rem; overflow:hidden;">
-            <img src="${hero.image}" alt="${hero.alias}" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.src='https://via.placeholder.com/650x300/ff2525/fffdf0?text=CLASSIFIED';">
-        </div>
-        <div class="comic-dossier-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:1.25rem; font-size:1.2rem;">
-            <div class="narrative-box" style="background:#ffffff;"><strong>01. ALIAS:</strong> ${hero.alias}</div>
-            <div class="narrative-box" style="background:#ffffff;"><strong>02. TRUE IDENTITY:</strong> ${hero.civilian_name}</div>
-            <div class="narrative-box" style="background:#fff9c4;"><strong>03. DEBUT ERA:</strong> ${hero.origin_era}</div>
-            <div class="narrative-box" style="background:#fff9c4;"><strong>04. GENETIC ORIGIN:</strong> ${hero.species_or_origin}</div>
-            <div class="narrative-box" style="background:#e1f5fe;"><strong>05. CLASSIFICATION:</strong> ${hero.classification}</div>
-            <div class="narrative-box" style="background:#ffcdd2; color:#b71c1c;"><strong>06. THREAT LEVEL:</strong> ${hero.threat_level}</div>
-            <div class="narrative-box" style="background:#ffffff;"><strong>07. AFFILIATION:</strong> ${hero.affiliation}</div>
-            <div class="narrative-box" style="background:#ffffff;"><strong>08. BASE OF OP:</strong> ${hero.base_of_operations}</div>
-            <div class="narrative-box" style="background:#fffde7; grid-column: span 2;"><strong>09. SUPERPOWERS:</strong> ${hero.primary_powers}</div>
-            <div class="narrative-box" style="background:#ffebee; color:#b71c1c; grid-column: span 2;"><strong>10. VULNERABILITY:</strong> ${hero.tactical_vulnerability}</div>
-            <div class="narrative-box" style="background:#ffffff; grid-column: span 2;"><strong>11. SIGNATURE GEAR:</strong> ${hero.signature_gear}</div>
-            <div class="narrative-box" style="background:#ffffff; grid-column: span 2;"><strong>12. COMBAT DOCTRINE:</strong> ${hero.tactical_profile}</div>
-            <div class="narrative-box" style="background:#f3e5f5; grid-column: span 2;"><strong>13. PSYCHE:</strong> ${hero.psychological_dossier}</div>
-            <div class="narrative-box" style="background:#ffebee; color:#b71c1c; grid-column: span 2;"><strong>14. ARCH-NEMESIS:</strong> ${hero.primary_adversary}</div>
-        </div>
-    `;
-    
-    modal.classList.remove("hidden");
+    // Guest Restriction check BEFORE fetching
+    if (currentUserRole === 'guest') {
+        modalBody.innerHTML = `
+            <div style="text-align: center; padding: 3rem;">
+                <h2 style="font-family:'Bangers', cursive; font-size:4rem; color:var(--comic-red);">ACCESS DENIED</h2>
+                <p style="font-family:'Comic Neue', cursive; font-size:1.5rem; font-weight:bold;">
+                    Civilian Guests do not have clearance to view full Metahuman psychological and tactical profiles. 
+                    <br><br>Please log in with an Agent Account.
+                </p>
+                <button onclick="location.reload()" class="action-btn" style="margin-top: 2rem;">RETURN TO LOGIN TERMINAL</button>
+            </div>
+        `;
+        modal.classList.remove("hidden");
+        return;
+    }
+
+    try {
+        // Registered Users & Admins fetch the full secure dossier data from backend
+        const response = await fetch(`${API_URL}/heroes/${id}`, {
+            headers: { "x-api-key": currentApiKey }
+        });
+        
+        if (!response.ok) throw new Error("Clearance rejected by server.");
+        const hero = await response.json();
+
+        modalBody.innerHTML = `
+            <div style="border-bottom: 4px solid var(--ink-black); padding-bottom: 1rem; margin-bottom: 1.5rem; position: relative;">
+                <div style="position:absolute; top:-10px; right:10px; font-family:'Bangers', cursive; color:#e30022; border:4px solid #e30022; padding:0.2rem 0.5rem; transform:rotate(12deg); font-size:1.5rem;">TOP SECRET</div>
+                <h2 style="font-family:'Bangers', cursive; font-size:3.8rem; color:var(--comic-red); line-height:0.95;">DOSSIER #${hero.id < 10 ? '0' + hero.id : hero.id}</h2>
+            </div>
+            <div style="width:100%; height:320px; border:5px solid var(--ink-black); box-shadow:8px 8px 0px var(--ink-black); margin-bottom:1.8rem; overflow:hidden;">
+                <img src="${hero.image}" alt="${hero.alias}" style="width:100%; height:100%; object-fit:cover;" onerror="this.onerror=null; this.src='https://via.placeholder.com/650x300/ff2525/fffdf0?text=CLASSIFIED';">
+            </div>
+            <div class="comic-dossier-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:1.25rem; font-size:1.2rem;">
+                <div class="narrative-box" style="background:#ffffff;"><strong>01. ALIAS:</strong> ${hero.alias}</div>
+                <div class="narrative-box" style="background:#ffffff;"><strong>02. TRUE IDENTITY:</strong> ${hero.civilian_name}</div>
+                <div class="narrative-box" style="background:#fff9c4;"><strong>03. DEBUT ERA:</strong> ${hero.origin_era}</div>
+                <div class="narrative-box" style="background:#fff9c4;"><strong>04. GENETIC ORIGIN:</strong> ${hero.species_or_origin}</div>
+                <div class="narrative-box" style="background:#e1f5fe;"><strong>05. CLASSIFICATION:</strong> ${hero.classification}</div>
+                <div class="narrative-box" style="background:#ffcdd2; color:#b71c1c;"><strong>06. THREAT LEVEL:</strong> ${hero.threat_level}</div>
+                <div class="narrative-box" style="background:#ffffff;"><strong>07. AFFILIATION:</strong> ${hero.affiliation}</div>
+                <div class="narrative-box" style="background:#ffffff;"><strong>08. BASE OF OP:</strong> ${hero.base_of_operations}</div>
+            </div>
+        `;
+        modal.classList.remove("hidden");
+    } catch (err) {
+        console.error(err);
+    }
 };
 
 // 6. Pagination & Mode Toggles
@@ -529,4 +549,15 @@ window.attemptLogin = async function() {
     } catch (err) {
         errorBox.innerText = err.message;
     }
+};
+
+// Guest Login Logic
+window.loginAsGuest = function() {
+    currentApiKey = "public_guest_clearance"; 
+    currentUserRole = "guest";
+    
+    // Hide login screen and load the comic catalog
+    document.getElementById("login-screen").style.display = "none";
+    if (typeof AudioFX !== 'undefined') AudioFX.playPunch();
+    initComic();
 };
