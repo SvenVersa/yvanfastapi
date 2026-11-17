@@ -12,9 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = FastAPI(title="Omniverse API", version="1.0.0")
-app = FastAPI(title="Omniverse API", version="1.0.0")
 
-# --- ADD THIS NEW BLOCK ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows your frontend to connect locally
@@ -22,15 +20,6 @@ app.add_middleware(
     allow_methods=["*"],  # Allows GET, POST, PUT, DELETE, and OPTIONS
     allow_headers=["*"],
 )
-# --------------------------
-
-# Security: API Key Verification
-API_KEY = "omega_level_clearance"
-
-def verify_api_key(x_api_key: str = Header(None)):
-    if x_api_key != API_KEY:
-        raise HTTPException(status_code=401, detail="Unauthorized: Invalid Omega Level Clearance")
-    return x_api_key
 
 # Database Connection Helper
 def get_db_connection():
@@ -45,7 +34,53 @@ def get_db_connection():
         raise HTTPException(status_code=500, detail="Database connection failed")
 
 # ---------------------------------------------------------
-# PHASE 6: SECURE PYDANTIC VALIDATION MODELS
+# AUTHENTICATION & SECURITY
+# ---------------------------------------------------------
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+# 1. Base Security: Verifies the key exists in the DB
+def get_current_user(x_api_key: str = Header(None)):
+    if not x_api_key:
+        raise HTTPException(status_code=401, detail="Unauthorized: Missing Clearance Key")
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT username, role FROM users WHERE api_key = %s;", (x_api_key,))
+        user = cursor.fetchone()
+        if not user:
+            raise HTTPException(status_code=401, detail="Unauthorized: Invalid Clearance Key")
+        return user
+    finally:
+        cursor.close()
+        conn.close()
+
+# 2. Admin Security: Checks if the user is an admin
+def require_admin(user: dict = Depends(get_current_user)):
+    if user['role'] != 'admin':
+        raise HTTPException(status_code=403, detail="Forbidden: Omega Level Admin Clearance Required")
+    return user
+
+# 3. Login Endpoint
+@app.post("/api/login")
+def login(req: LoginRequest):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT api_key, role FROM users WHERE username = %s AND password = %s;", (req.username, req.password))
+        user = cursor.fetchone()
+        if not user:
+            raise HTTPException(status_code=401, detail="Invalid Credentials")
+        return {"api_key": user['api_key'], "role": user['role']}
+    finally:
+        cursor.close()
+        conn.close()
+
+# ---------------------------------------------------------
+# SECURE PYDANTIC VALIDATION MODELS
 # ---------------------------------------------------------
 
 class HeroCreate(BaseModel):
@@ -92,7 +127,7 @@ class HeroUpdate(HeroCreate):
     alias: Optional[str] = Field(None, min_length=1, max_length=100)
 
 # ---------------------------------------------------------
-# PHASE 5: NEON DATABASE CRUD ENDPOINTS
+# NEON DATABASE CRUD ENDPOINTS
 # ---------------------------------------------------------
 
 @app.get("/")
@@ -111,7 +146,7 @@ def root():
 def health_check():
     return {"status": "online"}
 
-@app.get("/api/heroes/search", dependencies=[Depends(verify_api_key)])
+@app.get("/api/heroes/search", dependencies=[Depends(get_current_user)])
 def search_heroes(q: Optional[str] = None, publisher: Optional[str] = None, alignment: Optional[str] = None):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -136,7 +171,7 @@ def search_heroes(q: Optional[str] = None, publisher: Optional[str] = None, alig
         cursor.close()
         conn.close()
 
-@app.get("/api/heroes", dependencies=[Depends(verify_api_key)])
+@app.get("/api/heroes", dependencies=[Depends(get_current_user)])
 def get_all_heroes():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -148,7 +183,7 @@ def get_all_heroes():
         cursor.close()
         conn.close()
 
-@app.get("/api/heroes/{hero_id}", dependencies=[Depends(verify_api_key)])
+@app.get("/api/heroes/{hero_id}", dependencies=[Depends(get_current_user)])
 def get_hero(hero_id: int):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -162,7 +197,7 @@ def get_hero(hero_id: int):
         cursor.close()
         conn.close()
 
-@app.post("/api/heroes", status_code=201, dependencies=[Depends(verify_api_key)])
+@app.post("/api/heroes", status_code=201, dependencies=[Depends(require_admin)])
 def create_hero(hero: HeroCreate):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -185,7 +220,7 @@ def create_hero(hero: HeroCreate):
         cursor.close()
         conn.close()
 
-@app.put("/api/heroes/{hero_id}", dependencies=[Depends(verify_api_key)])
+@app.put("/api/heroes/{hero_id}", dependencies=[Depends(require_admin)])
 def update_hero(hero_id: int, hero: HeroUpdate):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -212,19 +247,17 @@ def update_hero(hero_id: int, hero: HeroUpdate):
         cursor.close()
         conn.close()
 
-
-
-@app.delete("/api/heroes/{hero_id}", dependencies=[Depends(verify_api_key)])
+@app.delete("/api/heroes/{hero_id}", dependencies=[Depends(require_admin)])
 def delete_hero(hero_id: int):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
         cursor.execute("DELETE FROM comic_archive WHERE id = %s RETURNING id;", (hero_id,))
         if not cursor.fetchone():
-            raise HTTPException(status_code=404, detail="Dossier not    found")
+            raise HTTPException(status_code=404, detail="Dossier not found")
             
         conn.commit()
         return {"message": f"Dossier {hero_id} purged from archive"}
     finally:
         cursor.close()
-        conn.close()    
+        conn.close()

@@ -1,6 +1,4 @@
-const API_URL = (window.location.port === "5500" || window.location.port === "5501") 
-    ? "http://127.0.0.1:8000/api" 
-    : "/api";
+const API_URL = "http://127.0.0.1:8000/api";
 
 const comicStage = document.getElementById("comic-stage");
 const searchInput = document.getElementById("search-input");
@@ -21,6 +19,8 @@ let filteredHeroes = [];
 let currentPage = 1;
 const HEROES_PER_PAGE = 15; 
 let isStripMode = false;
+let currentApiKey = null;
+let currentUserRole = null;
 
 // Routing State
 let activePublisher = null;
@@ -103,10 +103,11 @@ const AudioFX = {
 // 1. Fetch Heroes Archive
 async function initComic() {
     try {
-        const response = await fetch(`${API_URL}/heroes`, {
-            method: "GET",
-            headers: {
-                "x-api-key": "omega_level_clearance"
+        
+    const response = await fetch(`${API_URL}/heroes`, {
+    method: "GET",
+    headers: {
+        "x-api-key": currentApiKey // <-- Replaced hardcoded "omega_level_clearance"
     }
 });
         if (!response.ok) throw new Error("API Route unreachable.");
@@ -496,6 +497,36 @@ function startArcadeTicker() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    initComic();
+
     startArcadeTicker();
 });
+
+window.attemptLogin = async function() {
+    const user = document.getElementById("login-user").value.trim();
+    const pass = document.getElementById("login-pass").value.trim();
+    const errorBox = document.getElementById("login-error");
+    
+    errorBox.innerText = "AUTHENTICATING...";
+    
+    try {
+        const response = await fetch(`${API_URL}/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: user, password: pass })
+        });
+        
+        if (!response.ok) throw new Error("ACCESS DENIED: Invalid Credentials");
+        
+        const data = await response.json();
+        currentApiKey = data.api_key;
+        currentUserRole = data.role;
+        
+        // Hide login screen and load the comic catalog
+        document.getElementById("login-screen").style.display = "none";
+        if (AudioFX) AudioFX.playPunch(); // Optional sound effect
+        initComic(); 
+        
+    } catch (err) {
+        errorBox.innerText = err.message;
+    }
+};
